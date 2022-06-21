@@ -4,13 +4,12 @@
       <v-tabs-slider></v-tabs-slider>
       <v-tab v-for="(item, index) in items" :key="index" class="primary--text">
         <v-icon>{{ item.icon }}</v-icon>
-        <v-card-title>{{ item.title }}</v-card-title>
+        <v-card-text>{{ item.title }}</v-card-text>
       </v-tab>
     </v-tabs>
-
     <v-tabs-items v-model="tabs">
       <v-tab-item :key="1">
-        <EPS />
+        <Ensurance />
       </v-tab-item>
       <v-tab-item :key="3">
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos tenetur
@@ -22,10 +21,10 @@
 </template>
 
 <script>
-import EPS from "@/components/Forms/Ensurance/Add";
+import Ensurance from "@/components/Forms/Ensurance/Add";
 export default {
   name: "Settings",
-  components: { EPS },
+  components: { Ensurance },
   data() {
     return {
       tabs: null,
