@@ -17,6 +17,7 @@ export default {
   name: "Loading",
   props: {
     show: Boolean,
+    default: false,
   },
 
   data() {
@@ -24,13 +25,5 @@ export default {
       dialog: this.show,
     };
   },
-
-  // watch: {
-  //   dialog(val) {
-  //     if (!val) return;
-
-  //     setTimeout(() => (this.dialog = !this.show), 4000);
-  //   },
-  // },
 };
 </script>

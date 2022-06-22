@@ -1,9 +1,18 @@
-export default class EndPoints {
+class EndPoints {
     domine = "http://leonardorivero.pythonanywhere.com"
     get getAllGender() {
         return `${this.domine}/api/idtype/all/`;
     }
-    get createInsurance() {
+    get getORcreateInsurance() {
         return `${this.domine}/api/insurance/all/`;
     }
 }
+class Messages {
+    get successMessage() {
+        return "Datos Guardados Correctamente";
+    }
+    get errorMessage() {
+        return "Ocurrio un error. Intentelo de nuevo"
+    }
+}
+export default { EndPoints, Messages }

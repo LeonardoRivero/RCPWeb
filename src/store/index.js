@@ -5,16 +5,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    drawer: false
+    showConfirm: false
   },
-  // getters: {
-  //   DRAWER_STATE(state) {
-  //     return state.drawer;
-  //   }
-  // },
   mutations: {
-    toggleDrawer(state) {
-      state.drawer = !state.drawer;
+    handleConfirm(state, show) {
+      state.showConfirm = show;
     }
   },
   actions: {

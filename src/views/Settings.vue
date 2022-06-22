@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tabs v-model="tabs" fixed-tabs>
+    <v-tabs v-model="tabs" fixed-tabs show-arrows>
       <v-tabs-slider></v-tabs-slider>
       <v-tab v-for="(item, index) in items" :key="index" class="primary--text">
         <v-icon>{{ item.icon }}</v-icon>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Ensurance from "@/components/Forms/Ensurance/Add";
+import Ensurance from "@/components/Forms/Ensurance/Ensurance";
 export default {
   name: "Settings",
   components: { Ensurance },
@@ -31,8 +31,8 @@ export default {
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       items: [
         { title: "E.P.S", icon: "mdi-hospital-building" },
-        { title: "Codigo Diagnostico", icon: "mdi-numeric" },
-        { title: "Especialidades", icon: "mdi-account-box" },
+        { title: "Codigos DX", icon: "mdi-numeric" },
+        { title: "Especialidad", icon: "mdi-account-box" },
       ],
     };
   },
