@@ -66,32 +66,27 @@
         No hay datos no coinciden con la busqueda
       </template>
     </v-data-table>
-    <div>
-      <ConfirmDialog />
-    </div>
   </v-card>
 </template>
 <script>
 import Constants from "@/scripts/Constants";
 import Requests from "@/scripts/Request.js";
-import ConfirmDialog from "@/components/Commons/ConfirmDialog";
 import { mapMutations } from "vuex";
 
 export default {
-  components: { ConfirmDialog },
+  components: {},
   data: () => ({
     search: "",
     dialog: false,
     selected: [],
-    //showconfirmDialog: false,
     totaldataInsurance: 0,
     dataInsurance: [],
     loading: true,
     options: {},
-    formTitle: "Editar E.P.S",
+    formTitle: "Editar Entidad",
     headers: [
       {
-        text: "Nombre E.P.S",
+        text: "Nombre Entidad",
         align: "start",
         value: "nameInsurance",
       },
@@ -113,13 +108,6 @@ export default {
       id: 0,
     },
   }),
-
-  computed: {
-    // formTitle() {
-    //   return (this.editedIndex = "Editar E.P.S");
-    // },
-  },
-
   watch: {
     dialog(val) {
       val || this.close();
@@ -132,7 +120,6 @@ export default {
     this.initialize();
   },
   methods: {
-    // ...mapMutations(["handleConfirm"]),
     ...mapMutations(["showSnackbar", "closeSnackbar"]),
     async initialize() {
       this.loading = true;
@@ -174,14 +161,11 @@ export default {
           icon: "mdi-check-bold",
           color: "success",
         });
-        console.log(responseAsJson, "updated");
         Object.assign(this.dataInsurance[this.editedIndex], this.editedItem);
       } else {
         this.dataInsurance.push(this.editedItem);
       }
       this.close();
-
-      //this.showconfirmDialog = true;
     },
   },
 };

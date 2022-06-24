@@ -43,23 +43,6 @@
       </v-row>
     </v-container>
     <Loading v-if="showLoading" :show="showLoading" />
-    <!-- <v-snackbar
-      v-model="snackbar"
-      :right="true"
-      :top="true"
-      color="error"
-      dark
-      transition="scale-transition"
-    >
-      <v-icon>mdi-check-bold</v-icon>
-      {{ text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar> -->
-    <Notifications />
   </v-main>
 </template>
 <script>
@@ -69,12 +52,11 @@ import Requests from "@/scripts/Request.js";
 import Constants from "@/scripts/Constants";
 import Loading from "@/components/Commons/Loading";
 import Table from "@/components/Commons/Datatables";
-import Notifications from "@/components/Commons/Notifications";
 import { mapMutations } from "vuex";
 
 export default {
   mixins: [validationMixin],
-  components: { Loading, Table, Notifications },
+  components: { Loading, Table },
   validations: {
     nameInsurance: { required },
     entityCode: { required },
@@ -87,15 +69,10 @@ export default {
       request: new Requests(),
       endpoint: new Constants.EndPoints(),
       messages: new Constants.Messages(),
-      // isFormValid: new Boolean(),
       showLoading: false,
       snackbar: false,
-      // text: "Datos guardados correctamente.",
       insuranceList: {},
     };
-  },
-  mounted() {
-    //this.getInsuranceList();
   },
   computed: {
     nameInsuranceErrors() {
@@ -130,8 +107,6 @@ export default {
         nameInsurance: this.nameInsurance,
         entityCode: this.entityCode,
       };
-
-      //this.$store.commit("handleConfirm", true);
       let dataJSON = JSON.stringify(data);
       let url = this.endpoint.getORcreateInsurance;
       let responseAsJson = await this.request.post(url, dataJSON);
@@ -150,11 +125,6 @@ export default {
         color: "success",
       });
     },
-    // async getInsuranceList() {
-    //   // let url = this.endpoint.getORcreateInsurance;
-    //   // this.insuranceList = await this.request.get(url);
-    //   // console.log(this.insuranceList);
-    // },
   },
 };
 </script>
