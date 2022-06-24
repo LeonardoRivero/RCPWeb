@@ -6,6 +6,9 @@ class EndPoints {
     get getORcreateInsurance() {
         return `${this.domine}/api/insurance/all/`;
     }
+    updateInsurance(id) {
+        return this._urlUpdate = `${this.domine}/api/insurance/${id}/`;
+    }
 }
 class Messages {
     get successMessage() {

@@ -43,7 +43,7 @@
       </v-row>
     </v-container>
     <Loading v-if="showLoading" :show="showLoading" />
-    <v-snackbar
+    <!-- <v-snackbar
       v-model="snackbar"
       :right="true"
       :top="true"
@@ -58,7 +58,8 @@
           Close
         </v-btn>
       </template>
-    </v-snackbar>
+    </v-snackbar> -->
+    <Notifications />
   </v-main>
 </template>
 <script>
@@ -68,10 +69,12 @@ import Requests from "@/scripts/Request.js";
 import Constants from "@/scripts/Constants";
 import Loading from "@/components/Commons/Loading";
 import Table from "@/components/Commons/Datatables";
+import Notifications from "@/components/Commons/Notifications";
+import { mapMutations } from "vuex";
 
 export default {
   mixins: [validationMixin],
-  components: { Loading, Table },
+  components: { Loading, Table, Notifications },
   validations: {
     nameInsurance: { required },
     entityCode: { required },
@@ -84,67 +87,74 @@ export default {
       request: new Requests(),
       endpoint: new Constants.EndPoints(),
       messages: new Constants.Messages(),
-      isFormValid: new Boolean(),
+      // isFormValid: new Boolean(),
       showLoading: false,
       snackbar: false,
-      text: "Datos guardados correctamente.",
+      // text: "Datos guardados correctamente.",
       insuranceList: {},
     };
   },
   mounted() {
-    this.getInsuranceList();
+    //this.getInsuranceList();
   },
   computed: {
     nameInsuranceErrors() {
       const errors = [];
-      console.log(this.$v.nameInsurance);
       if (!this.$v.nameInsurance.$dirty) {
-        this.isFormValid = true;
         return errors;
       }
       !this.$v.nameInsurance.required && errors.push("Nombre EPS es requerido");
-      this.isFormValid = false;
       return errors;
     },
     entityCodeErrors() {
       const errors = [];
-      console.log(this.$v.entityCode);
       if (!this.$v.entityCode.$dirty) {
-        this.isFormValid = true;
         return errors;
       }
       !this.$v.entityCode.required &&
         errors.push("Codigo Entidad es requerido");
-      this.isFormValid = false;
       return errors;
     },
   },
 
   methods: {
+    ...mapMutations(["showSnackbar", "closeSnackbar"]),
     async submit() {
-      if (this.isFormValid) {
-        this.showLoading = true;
-        let data = {
-          //nameInsurance: this.nameInsurance,
-          //entityCode: this.entityCode,
-        };
-        let dataJSON = JSON.stringify(data);
-        let url = this.endpoint.getORcreateInsurance;
-        let responseAsJson = await this.request.post(url, dataJSON);
-        this.showLoading = false;
-        if (responseAsJson != undefined) {
-          this.snackbar = true;
-          return;
-        }
-        this.text = this.messages.successMessage;
-        this.snackbar = true;
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return;
       }
+
+      this.showLoading = true;
+      let data = {
+        nameInsurance: this.nameInsurance,
+        entityCode: this.entityCode,
+      };
+
+      //this.$store.commit("handleConfirm", true);
+      let dataJSON = JSON.stringify(data);
+      let url = this.endpoint.getORcreateInsurance;
+      let responseAsJson = await this.request.post(url, dataJSON);
+      this.showLoading = false;
+      if (responseAsJson === undefined) {
+        this.showSnackbar({
+          text: this.messages.errorMessage,
+          icon: "mdi-close-thick",
+          color: "error",
+        });
+        return;
+      }
+      this.showSnackbar({
+        text: this.messages.successMessage,
+        icon: "mdi-check-bold",
+        color: "success",
+      });
     },
-    async getInsuranceList() {
-      // let url = this.endpoint.getORcreateInsurance;
-      // this.insuranceList = await this.request.get(url);
-      // console.log(this.insuranceList);
-    },
+    // async getInsuranceList() {
+    //   // let url = this.endpoint.getORcreateInsurance;
+    //   // this.insuranceList = await this.request.get(url);
+    //   // console.log(this.insuranceList);
+    // },
   },
 };
 </script>

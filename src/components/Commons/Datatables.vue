@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-toolbar-title>E.P.S</v-toolbar-title>
+      <v-toolbar-title>Entidad</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -52,9 +52,7 @@
               <v-btn color="blue darken-1" text @click="close">
                 Cancelar
               </v-btn>
-              <v-btn color="blue darken-1" text @click="handleConfirm(true)">
-                Guardar
-              </v-btn>
+              <v-btn color="blue darken-1" text @click="save"> Guardar </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -64,6 +62,9 @@
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       </template>
       <template v-slot:no-data> No hay datos para mostrar </template>
+      <template v-slot:no-results>
+        No hay datos no coinciden con la busqueda
+      </template>
     </v-data-table>
     <div>
       <ConfirmDialog />
@@ -75,6 +76,7 @@ import Constants from "@/scripts/Constants";
 import Requests from "@/scripts/Request.js";
 import ConfirmDialog from "@/components/Commons/ConfirmDialog";
 import { mapMutations } from "vuex";
+
 export default {
   components: { ConfirmDialog },
   data: () => ({
@@ -97,6 +99,7 @@ export default {
       { text: "Actions", value: "actions", sortable: false },
     ],
     endpoint: new Constants.EndPoints(),
+    messages: new Constants.Messages(),
     request: new Requests(),
     editedIndex: -1,
     editedItem: {
@@ -129,7 +132,8 @@ export default {
     this.initialize();
   },
   methods: {
-    ...mapMutations(["handleConfirm"]),
+    // ...mapMutations(["handleConfirm"]),
+    ...mapMutations(["showSnackbar", "closeSnackbar"]),
     async initialize() {
       this.loading = true;
       let url = this.endpoint.getORcreateInsurance;
@@ -152,9 +156,25 @@ export default {
       });
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
-        console.log(this.editedItem);
+        let url = this.endpoint.updateInsurance(this.editedItem.id);
+        let dataJSON = JSON.stringify(this.editedItem);
+        let responseAsJson = await this.request.put(url, dataJSON);
+        if (responseAsJson === undefined) {
+          this.showSnackbar({
+            text: this.messages.errorMessage,
+            icon: "mdi-close-thick",
+            color: "error",
+          });
+          return;
+        }
+        this.showSnackbar({
+          text: this.messages.successMessage,
+          icon: "mdi-check-bold",
+          color: "success",
+        });
+        console.log(responseAsJson, "updated");
         Object.assign(this.dataInsurance[this.editedIndex], this.editedItem);
       } else {
         this.dataInsurance.push(this.editedItem);

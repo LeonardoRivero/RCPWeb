@@ -54,7 +54,6 @@ export default class Requests {
     }
     async handleResponse(url) {
         try {
-            console.log(this.options, url)
             let response = await fetch(url, this.options)
             if (response.ok) {
                 let responseAsJson = await response.json()
