@@ -3,30 +3,37 @@
     <v-container>
       <v-row>
         <v-col sm="auto">
-          <v-sheet rounded="lg" min-height="268">
-            <form>
-              <v-text-field
-                v-model="nameInsurance"
-                :error-messages="nameInsuranceErrors"
-                label="Nombre EPS"
-                required
-                @input="$v.nameInsurance.$touch()"
-                @blur="$v.nameInsurance.$touch()"
-              ></v-text-field>
-              <v-text-field
-                v-model="entityCode"
-                :error-messages="entityCodeErrors"
-                label="Codigo EPS"
-                required
-                @input="$v.entityCode.$touch()"
-                @blur="$v.entityCode.$touch()"
-              ></v-text-field>
+          <v-card elevation="18" class="mx-auto" max-width="344" outlined>
+            <v-card-title>
+              <v-toolbar-title>Agregar Entidad</v-toolbar-title>
+            </v-card-title>
+            <v-list-item three-line>
+              <v-list-item-content>
+                <form>
+                  <v-text-field
+                    v-model="nameInsurance"
+                    :error-messages="nameInsuranceErrors"
+                    label="Nombre Entidad"
+                    required
+                    @input="$v.nameInsurance.$touch()"
+                    @blur="$v.nameInsurance.$touch()"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="entityCode"
+                    :error-messages="entityCodeErrors"
+                    label="Codigo Entidad"
+                    required
+                    @input="$v.entityCode.$touch()"
+                    @blur="$v.entityCode.$touch()"
+                  ></v-text-field>
 
-              <v-btn class="mr-4" @click="submit" outlined color="indigo">
-                Guardar
-              </v-btn>
-            </form>
-          </v-sheet>
+                  <v-btn class="mr-4" @click="submit" outlined color="indigo">
+                    Guardar
+                  </v-btn>
+                </form>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
         </v-col>
 
         <v-col cols="12" sm="6">
@@ -42,7 +49,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <Loading v-if="showLoading" :show="showLoading" />
+    <!-- <Loading v-if="showLoading" :show="showLoading" /> -->
   </v-main>
 </template>
 <script>
@@ -69,7 +76,7 @@ export default {
       request: new Requests(),
       endpoint: new Constants.EndPoints(),
       messages: new Constants.Messages(),
-      showLoading: false,
+      //showLoading: false,
       snackbar: false,
       insuranceList: {},
     };
@@ -80,7 +87,8 @@ export default {
       if (!this.$v.nameInsurance.$dirty) {
         return errors;
       }
-      !this.$v.nameInsurance.required && errors.push("Nombre EPS es requerido");
+      !this.$v.nameInsurance.required &&
+        errors.push("Nombre Entidad es requerido");
       return errors;
     },
     entityCodeErrors() {
@@ -95,14 +103,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["showSnackbar", "closeSnackbar"]),
+    ...mapMutations(["showSnackbar", "closeSnackbar", "showLoading"]),
     async submit() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;
       }
-
-      this.showLoading = true;
+      this.showLoading({ visible: true });
       let data = {
         nameInsurance: this.nameInsurance,
         entityCode: this.entityCode,
@@ -110,7 +117,7 @@ export default {
       let dataJSON = JSON.stringify(data);
       let url = this.endpoint.getORcreateInsurance;
       let responseAsJson = await this.request.post(url, dataJSON);
-      this.showLoading = false;
+      this.showLoading({ visible: false });
       if (responseAsJson === undefined) {
         this.showSnackbar({
           text: this.messages.errorMessage,

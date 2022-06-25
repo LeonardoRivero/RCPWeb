@@ -6,6 +6,9 @@ class EndPoints {
     get getORcreateInsurance() {
         return `${this.domine}/api/insurance/all/`;
     }
+    get getORcreateSpeciality() {
+        return `${this.domine}/api/speciality/all/`;
+    }
     updateInsurance(id) {
         return this._urlUpdate = `${this.domine}/api/insurance/${id}/`;
     }

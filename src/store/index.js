@@ -7,6 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // showConfirm: false,
+    loading: { visible: false },
     snackbar: {
       visible: false,
       text: null,
@@ -27,6 +28,9 @@ export default new Vuex.Store({
     //     window.clearTimeout(timeoutHandle);
     //   }
     // },
+    showLoading(state, show) {
+      state.loading = show;
+    },
     showSnackbar(state, payload) {
       state.snackbar.text = payload.text;
       if (payload.timeout) {

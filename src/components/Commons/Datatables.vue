@@ -18,8 +18,10 @@
       sort-by="nameInsurance"
       class="elevation-1"
       :search="search"
-      show-select
       :single-select="true"
+      :footer-props="{
+        'items-per-page-text': 'Items por pagina',
+      }"
     >
       <template v-slot:top>
         <!-- <v-toolbar flat> -->
@@ -35,7 +37,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem.nameInsurance"
-                      label="Nombre E.P:S"
+                      label="Nombre Entidad"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -63,7 +65,7 @@
       </template>
       <template v-slot:no-data> No hay datos para mostrar </template>
       <template v-slot:no-results>
-        No hay datos no coinciden con la busqueda
+        No hay datos que coincidan con la busqueda
       </template>
     </v-data-table>
   </v-card>

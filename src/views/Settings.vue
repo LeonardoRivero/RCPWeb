@@ -8,13 +8,14 @@
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tabs">
-      <v-tab-item :key="1">
+      <v-tab-item :key="0">
         <Ensurance />
       </v-tab-item>
-      <v-tab-item :key="3">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos tenetur
-        dicta maiores fugit voluptatem quaerat odio a enim ex consequatur
-        tempore illum excepturi, sint ullam illo. Adipisci magni dicta mollitia.
+      <v-tab-item :key="1">
+        <DxMainCode />
+      </v-tab-item>
+      <v-tab-item :key="2">
+        <Speciality />
       </v-tab-item>
     </v-tabs-items>
   </div>
@@ -22,15 +23,17 @@
 
 <script>
 import Ensurance from "@/components/Forms/Ensurance/Ensurance";
+import DxMainCode from "@/pages/DXMainCode/DxMainCode";
+import Speciality from "@/pages/Speciality/Speciality";
 export default {
   name: "Settings",
-  components: { Ensurance },
+  components: { Ensurance, DxMainCode, Speciality },
   data() {
     return {
       tabs: null,
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       items: [
-        { title: "E.P.S", icon: "mdi-hospital-building" },
+        { title: "Entidad", icon: "mdi-hospital-building" },
         { title: "Codigos DX", icon: "mdi-numeric" },
         { title: "Especialidad", icon: "mdi-account-box" },
       ],

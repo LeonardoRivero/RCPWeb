@@ -11,7 +11,6 @@
       <Header />
     </v-app-bar>
     <v-container>
-      <!-- <Patient /> -->
       <router-view />
     </v-container>
     <v-footer>
