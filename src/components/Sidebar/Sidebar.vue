@@ -13,12 +13,7 @@
     </v-list-item>
     <v-divider></v-divider>
     <v-list-item-group>
-      <v-list-item
-        v-for="(item, index) in items"
-        :key="index"
-        link
-        :to="item.link"
-      >
+      <v-list-item v-for="(item, index) in items" :key="index" link :to="item.link">
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -36,7 +31,7 @@ export default {
     return {
       items: [
         { title: "Inicio", icon: "mdi-home", link: "/patientcreate" },
-        { title: "Pacientes", icon: "mdi-account-injury", link: "/test" },
+        { title: "Pacientes", icon: "mdi-human-wheelchair", link: "/test" },
         { title: "Citas", icon: "mdi-calendar-clock", link: "/create" },
         { title: "Configuracion", icon: "mdi-cog", link: "/settings" },
       ],
@@ -49,3 +44,12 @@ export default {
   },
 };
 </script>
+<!-- gineco mujer embaradzada
+peditaria bebe
+cardiologia corazon
+ortopedia injury
+reumatologia manos multiples
+odontologia mdi tooth
+inmunologia jeringa
+oftamologia ojo
+internista mdi medical bag -->
