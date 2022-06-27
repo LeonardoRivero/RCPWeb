@@ -73,7 +73,7 @@
 <script>
 import Constants from "@/scripts/Constants";
 import Requests from "@/scripts/Request.js";
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   components: {},
@@ -122,11 +122,12 @@ export default {
     this.initialize();
   },
   methods: {
-    ...mapMutations(["showSnackbar", "closeSnackbar"]),
+    ...mapMutations(["showSnackbar", "closeSnackbar", "insuranceListData"]),
+    ...mapState(["insuranceList"]),
     async initialize() {
       this.loading = true;
-      let url = this.endpoint.getORcreateInsurance;
-      this.dataInsurance = await this.request.get(url);
+      await this.$store.dispatch("getInsuranceList");
+      this.dataInsurance = await this.insuranceList();
       this.totaldataInsurance = this.dataInsurance.length;
       this.loading = false;
     },

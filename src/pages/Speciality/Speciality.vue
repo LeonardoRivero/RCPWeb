@@ -1,32 +1,36 @@
 <template>
-  <form>
-    <v-row no-gutters>
-      <v-col :key="1" cols="12" sm="3">
-        <v-card elevation="18" class="mx-auto" max-width="344" outlined>
-          <v-card-title>
-            <v-toolbar-title>Agregar Especialidad</v-toolbar-title>
-          </v-card-title>
-          <v-list-item three-line>
-            <v-list-item-content>
-              <v-text-field v-model="description" :error-messages="specialityErrors" label="Especialidad" required
-                @input="$v.description.$touch()" @blur="$v.description.$touch()">
-              </v-text-field>
-              <v-btn @click="submit" outlined color="indigo">
-                Guardar
-              </v-btn>
-            </v-list-item-content>
-          </v-list-item>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="4">
-        <v-select v-model="select" :items="specialities" item-text="description" item-value="id"
-          label="Seleccione Especialidad">
+  <div v-if="speciality.visible">
+    <v-card elevation="18" class="mx-auto" outlined>
+      <v-card-title>
+        <v-toolbar-title>Agregar Especialidad</v-toolbar-title>
+      </v-card-title>
+      <v-list-item three-line>
+        <v-list-item-content>
+          <v-text-field
+            v-model="description"
+            :error-messages="specialityErrors"
+            label="Especialidad"
+            required
+            @input="$v.description.$touch()"
+            @blur="$v.description.$touch()"
+          >
+          </v-text-field>
+          <v-btn @click="submit" outlined color="indigo"> Guardar </v-btn>
+        </v-list-item-content>
+      </v-list-item>
+    </v-card>
+    <!-- <v-col cols="12" sm="4">
+        <v-select
+          v-model="select"
+          :items="specialities"
+          item-text="description"
+          item-value="id"
+          label="Seleccione Especialidad"
+        >
         </v-select>
       </v-col>
-      <v-checkbox v-model="checkbox1" :label="'Agregar'"></v-checkbox>
-
-    </v-row>
-  </form>
+      <v-checkbox v-model="checkbox1" :label="'Agregar'"></v-checkbox> -->
+  </div>
 </template>
 <script>
 import { validationMixin } from "vuelidate";
@@ -44,7 +48,7 @@ export default {
   },
   data() {
     return {
-      select: { description: 'Seleccione Especialidad', id: 0 },
+      select: { description: "Seleccione Especialidad", id: 0 },
       description: "",
       checkbox1: false,
       specialities: [],
@@ -62,12 +66,20 @@ export default {
         errors.push("Especialidad es requerida.");
       return errors;
     },
+    speciality() {
+      return this.$store.state.speciality;
+    },
   },
   mounted() {
-    this.getSpecialities()
+    this.getSpecialities();
   },
   methods: {
-    ...mapMutations(["showSnackbar", "closeSnackbar", "showLoading"]),
+    ...mapMutations([
+      "showSnackbar",
+      "closeSnackbar",
+      "showLoading",
+      "addSpeciality",
+    ]),
     async submit() {
       this.$v.$touch();
       if (this.$v.$invalid) {
@@ -101,7 +113,7 @@ export default {
       let url = this.endpoint.getORcreateSpeciality;
       this.specialities = await this.request.get(url);
       console.log(this.specialities);
-    }
+    },
   },
 };
 </script>

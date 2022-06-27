@@ -1,35 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-//import snackbar from "@/modules/snackbarto.js"
+import Request from '@/scripts/Request'
+import Constants from "@/scripts/Constants";
 
 Vue.use(Vuex)
-
 export default new Vuex.Store({
   state: {
-    // showConfirm: false,
     loading: { visible: false },
+    speciality: { visible: false },
     snackbar: {
       visible: false,
       text: null,
       timeout: 3000,
       icon: null,
       color: null
-    }
+    },
+    insuranceList: {}
   },
   mutations: {
-    // handleConfirm(state, show) {
-    //   console.log("first")
-    //   state.showConfirm = show;
-    //   let timeoutHandle = null
-    //   if (show === true) {
-    //     timeoutHandle = setTimeout(() => { state.showConfirm = false }, 5000)
-    //   }
-    //   else {
-    //     window.clearTimeout(timeoutHandle);
-    //   }
-    // },
     showLoading(state, show) {
       state.loading = show;
+    },
+    addSpeciality(state, show) {
+      state.speciality = show;
     },
     showSnackbar(state, payload) {
       state.snackbar.text = payload.text;
@@ -49,11 +42,18 @@ export default new Vuex.Store({
       state.snackbar.timeout = 3000;
       state.snackbar.text = null;
     },
+    insuranceListData(state, data) {
+      state.insuranceList = data
+    }
   },
   actions: {
-    // TOGGLE_DRAWER({ commit }) {
-    //   commit('toggleDrawer');
-    // }
+    async getInsuranceList(context) {
+      let request = new Request()
+      let endpoint = new Constants.EndPoints()
+      let url = endpoint.getORcreateInsurance
+      let responseAsJson = await request.get(url)
+      context.commit('insuranceListData', responseAsJson)
+    }
   },
   modules: {
     //snackbar

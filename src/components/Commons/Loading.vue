@@ -28,10 +28,5 @@ export default {
   methods: {
     ...mapMutations(["showLoading"]),
   },
-  // data() {
-  //   return {
-  //     dialog: this.show,
-  //   };
-  // },
 };
 </script>

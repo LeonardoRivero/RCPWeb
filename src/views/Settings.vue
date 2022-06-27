@@ -12,30 +12,24 @@
         <Ensurance />
       </v-tab-item>
       <v-tab-item :key="1">
-        <DxMainCode />
-      </v-tab-item>
-      <v-tab-item :key="2">
-        <Speciality />
+        <CUPs />
       </v-tab-item>
     </v-tabs-items>
   </div>
 </template>
 
 <script>
-import Ensurance from "@/components/Forms/Ensurance/Ensurance";
-import DxMainCode from "@/pages/DXMainCode/DxMainCode";
-import Speciality from "@/pages/Speciality/Speciality";
+import Ensurance from "@/components/Ensurance/Ensurance";
+import CUPs from "@/components/CUPS/CUP";
 export default {
   name: "Settings",
-  components: { Ensurance, DxMainCode, Speciality },
+  components: { Ensurance, CUPs },
   data() {
     return {
       tabs: null,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       items: [
         { title: "Entidad", icon: "mdi-hospital-building" },
-        { title: "Codigos DX", icon: "mdi-numeric" },
-        { title: "Especialidad", icon: "mdi-account-box" },
+        { title: "CUPs", icon: "mdi-numeric" },
       ],
     };
   },
