@@ -12,8 +12,17 @@ class EndPoints {
     get getORcreateCup() {
         return `${this.domine}/api/dxmaincode/all/`;
     }
+    get getORcreateRelationCode() {
+        return `${this.domine}/api/relationcode/all/`;
+    }
     updateInsurance(id) {
         return this._urlUpdate = `${this.domine}/api/insurance/${id}/`;
+    }
+    updateSpeciality(id) {
+        return this._urlUpdate = `${this.domine}/api/speciality/${id}/`;
+    }
+    updateCUP(id) {
+        return this._urlUpdate = `${this.domine}/api/dxmaincode/${id}/`;
     }
 }
 class Messages {

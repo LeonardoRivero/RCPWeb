@@ -54,7 +54,7 @@
 </template>
 <script>
 import { validationMixin } from "vuelidate";
-import { required, maxLength, email } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import Requests from "@/scripts/Request.js";
 import Constants from "@/scripts/Constants";
 import Loading from "@/components/Commons/Loading";

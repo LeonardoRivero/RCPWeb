@@ -10,7 +10,6 @@ function getCookie(name) {
             }
         }
     }
-    console.log(cookieValue)
     return cookieValue;
 }
 const csrftoken = getCookie('csrftoken');

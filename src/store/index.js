@@ -2,8 +2,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Request from '@/scripts/Request'
 import Constants from "@/scripts/Constants";
+import settings from './modules/settings'
+import notifications from './modules/notifications';
 
 Vue.use(Vuex)
+
+const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   state: {
     loading: { visible: false },
@@ -56,11 +60,13 @@ export default new Vuex.Store({
     }
   },
   modules: {
-    //snackbar
+    settings,
+    notifications
   },
+  strict: debug,
   getters: {
     showConfirm: (state) => {
       return state.showConfirm;
-    }
+    },
   }
 })

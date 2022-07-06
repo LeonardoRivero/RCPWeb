@@ -1,15 +1,15 @@
 <template>
   <v-snackbar
-    :timeout="snackbar.timeout"
+    :timeout="getSnackbar.timeout"
     right
     top
     dark
-    :color="snackbar.color"
-    v-model="snackbar.visible"
+    :color="getSnackbar.color"
+    v-model="getSnackbar.visible"
     transition="scale-transition"
   >
-    <v-icon>{{ snackbar.icon }}</v-icon>
-    {{ snackbar.text }}
+    <v-icon>{{ getSnackbar.icon }}</v-icon>
+    {{ getSnackbar.text }}
     <template v-slot:action="{ attrs }">
       <v-btn text color="white" v-bind="attrs" @click.native="closeSnackbar"
         >Cerrar
@@ -19,15 +19,16 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters, mapState } from "vuex";
 export default {
   computed: {
-    snackbar() {
-      return this.$store.state.snackbar;
-    },
+    // snackbar() {
+    //   return this.$store.state.snackbar;
+    // },
+    ...mapGetters("notifications", ["getSnackbar"]),
   },
   methods: {
-    ...mapMutations(["closeSnackbar"]),
+    ...mapMutations("notifications", ["closeSnackbar"]),
   },
 };
 </script>

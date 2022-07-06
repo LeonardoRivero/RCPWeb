@@ -1,25 +1,25 @@
 <template >
   <v-form
-    v-if="specialityForm.visible"
+    v-if="dxMainCodeForm.visible"
     ref="form"
     v-model="valid"
     lazy-validation
   >
     <v-card elevation="18" class="mx-auto" outlined>
       <v-card-title>
-        <v-toolbar-title>{{ specialityForm.title }}</v-toolbar-title>
+        <v-toolbar-title>{{ dxMainCodeForm.title }}</v-toolbar-title>
       </v-card-title>
       <v-list-item three-line>
         <v-list-item-content>
           <v-text-field
-            :value="specialityForm.data.description"
-            label="Especialidad"
+            :value="dxMainCodeForm.data.description"
+            label="Codigo Principal"
             required
-            :rules="nameRules"
-            @input="setSpeciality"
+            :rules="DxMainCodeRules"
+            @input="setDXMainCode"
           >
           </v-text-field>
-          <v-btn :disabled="!valid" @click="validate" outlined color="indigo">
+          <v-btn small @click="validate" outlined color="indigo">
             Guardar
           </v-btn>
         </v-list-item-content>
@@ -33,9 +33,8 @@ import { required } from "vuelidate/lib/validators";
 import { mapMutations, mapGetters, mapActions } from "vuex";
 import Requests from "@/scripts/Request.js";
 import Constants from "@/scripts/Constants";
-
 export default {
-  name: "Speciality",
+  name: "DxMainCode",
   mixins: [validationMixin],
   validations: {
     description: { required },
@@ -47,24 +46,26 @@ export default {
       endpoint: new Constants.EndPoints(),
       messages: new Constants.Messages(),
       valid: true,
-      nameRules: [(v) => !!v || "Especialidad es requerida"],
+      DxMainCodeRules: [(v) => !!v || "Codigo Principal es requerido"],
     };
   },
   computed: {
-    ...mapGetters("settings", ["specialityForm"]),
+    ...mapGetters("settings", ["dxMainCodeForm", "specialityForm"]),
   },
   methods: {
-    ...mapMutations(["showSnackbar", "showLoading", "specialityForms"]),
-    ...mapActions("settings", ["getSpecialityList"]),
+    ...mapMutations(["showSnackbar", "showLoading"]),
+    // ...mapActions("settings", ["getSpecialityList"]),
     async validate() {
       let valid = this.$refs.form.validate();
       if (valid) {
         this.showLoading({ visible: true });
         let responseAsJson = undefined;
-        if (this.specialityForm.data.id === null) {
-          let url = this.endpoint.getORcreateSpeciality;
+        let speciality = this.specialityForm.data;
+        if (this.dxMainCodeForm.data.id === null) {
+          let url = this.endpoint.getORcreateCup;
           let data = {
-            description: this.description,
+            CUT: this.description,
+            especiality: speciality.id,
           };
           let dataJSON = JSON.stringify(data);
           responseAsJson = await this.request.post(url, dataJSON);
@@ -88,7 +89,7 @@ export default {
           });
           return;
         }
-        await this.$store.dispatch("settings/getSpecialityList");
+        //await this.$store.dispatch("settings/getSpecialityList");
         this.showSnackbar({
           text: this.messages.successMessage,
           icon: "mdi-check-bold",
@@ -96,7 +97,7 @@ export default {
         });
       }
     },
-    setSpeciality($event) {
+    setDXMainCode($event) {
       this.description = $event;
     },
   },

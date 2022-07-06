@@ -1,5 +1,5 @@
 <template >
-  <v-dialog v-model="loading.visible" hide-overlay persistent width="300">
+  <v-dialog v-model="getLoading.visible" hide-overlay persistent width="300">
     <v-card color="primary" dark>
       <v-card-text>
         Espere por favor ...
@@ -13,7 +13,7 @@
   </v-dialog>
 </template>
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters, mapActions } from "vuex";
 export default {
   // name: "Loading",
   // props: {
@@ -21,12 +21,13 @@ export default {
   //   default: false,
   // },
   computed: {
-    loading() {
-      return this.$store.state.loading;
-    },
+    // loading() {
+    //   return this.$store.state.loading;
+    // },
+    ...mapGetters("notifications", ["getLoading"]),
   },
   methods: {
-    ...mapMutations(["showLoading"]),
+    ...mapMutations("notifications", ["showLoading"]),
   },
 };
 </script>
