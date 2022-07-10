@@ -12,11 +12,18 @@
       <v-list-item three-line>
         <v-list-item-content>
           <v-text-field
-            :value="dxMainCodeForm.data.description"
+            :value="dxMainCodeForm.data.CUP"
             label="Codigo Principal"
             required
+            maxlength="10"
             :rules="DxMainCodeRules"
-            @input="setDXMainCode"
+          >
+          </v-text-field>
+          <v-text-field
+            :value="dxMainCodeForm.data.description"
+            label="Descripcion Codigo Principal"
+            required
+            :rules="DescriptionDxMainCodeRules"
           >
           </v-text-field>
           <v-btn small @click="validate" outlined color="indigo">
@@ -28,25 +35,21 @@
   </v-form>
 </template>
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
 import { mapMutations, mapGetters, mapActions } from "vuex";
 import Requests from "@/scripts/Request.js";
 import Constants from "@/scripts/Constants";
 export default {
   name: "DxMainCode",
-  mixins: [validationMixin],
-  validations: {
-    description: { required },
-  },
   data() {
     return {
-      description: "",
+      dxMainCode: "",
+      descriptionDxMainCode: "",
       request: new Requests(),
       endpoint: new Constants.EndPoints(),
       messages: new Constants.Messages(),
       valid: true,
       DxMainCodeRules: [(v) => !!v || "Codigo Principal es requerido"],
+      DescriptionDxMainCodeRules: [(v) => !!v || "Descripcion es requerido"],
     };
   },
   computed: {
@@ -54,52 +57,54 @@ export default {
   },
   methods: {
     ...mapMutations(["showSnackbar", "showLoading"]),
-    // ...mapActions("settings", ["getSpecialityList"]),
+    ...mapActions("settings", ["addDXMainCode", "updateDXMainCode"]),
     async validate() {
       let valid = this.$refs.form.validate();
       if (valid) {
-        this.showLoading({ visible: true });
-        let responseAsJson = undefined;
         let speciality = this.specialityForm.data;
-        if (this.dxMainCodeForm.data.id === null) {
+        if (this.dxMainCodeForm.id === null) {
           let url = this.endpoint.getORcreateCup;
-          let data = {
-            CUT: this.description,
-            especiality: speciality.id,
+          let payload = {
+            CUP: this.dxMainCode.CUP,
+            description: this.descriptionDxMainCode,
+            speciality: speciality.id,
           };
-          let dataJSON = JSON.stringify(data);
-          responseAsJson = await this.request.post(url, dataJSON);
+          let dataJSON = JSON.stringify(payload);
+          this.addDXMainCode(dataJSON);
+          //responseAsJson = await this.request.post(url, dataJSON);
         }
-        if (typeof this.specialityForm.data.id == "number") {
-          let url = this.endpoint.updateSpeciality(this.specialityForm.data.id);
-          let data = {
-            description: this.description,
-            id: this.specialityForm.data.id,
+        if (typeof this.dxMainCodeForm.id == "number") {
+          //let url = this.endpoint.updateDxMainCode(this.specialityForm.data.id);
+          let payload = {
+            CUP: this.dxMainCode.CUP,
+            description: this.dxMainCode.description,
+            id: this.dxMainCodeForm.id,
+            speciality: this.dxMainCode.speciality.id,
           };
-          let dataJSON = JSON.stringify(data);
-          responseAsJson = await this.request.put(url, dataJSON);
-          console.log(responseAsJson);
+          let dataJSON = JSON.stringify(payload);
+          this.updateDXMainCode(dataJSON);
+          //responseAsJson = await this.request.put(url, dataJSON);
         }
-        this.showLoading({ visible: false });
-        if (responseAsJson === undefined) {
-          this.showSnackbar({
-            text: this.messages.errorMessage,
-            icon: "mdi-close-thick",
-            color: "error",
-          });
-          return;
-        }
-        //await this.$store.dispatch("settings/getSpecialityList");
-        this.showSnackbar({
-          text: this.messages.successMessage,
-          icon: "mdi-check-bold",
-          color: "success",
-        });
+        // this.showLoading({ visible: false });
+        // if (responseAsJson === undefined) {
+        //   this.showSnackbar({
+        //     text: this.messages.errorMessage,
+        //     icon: "mdi-close-thick",
+        //     color: "error",
+        //   });
+        //   return;
+        // }
+        // //await this.$store.dispatch("settings/getSpecialityList");
+        // this.showSnackbar({
+        //   text: this.messages.successMessage,
+        //   icon: "mdi-check-bold",
+        //   color: "success",
+        // });
       }
     },
-    setDXMainCode($event) {
-      this.description = $event;
-    },
+    // setDXMainCode($event) {
+    //   this.description = $event;
+    // },
   },
 };
 </script>

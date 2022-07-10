@@ -1,6 +1,5 @@
 <template>
   <v-snackbar
-    :timeout="getSnackbar.timeout"
     right
     top
     dark

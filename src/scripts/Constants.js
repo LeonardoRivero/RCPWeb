@@ -9,7 +9,7 @@ class EndPoints {
     get getORcreateSpeciality() {
         return `${this.domine}/api/speciality/all/`;
     }
-    get getORcreateCup() {
+    get getORcreateDxMainCode() {
         return `${this.domine}/api/dxmaincode/all/`;
     }
     get getORcreateRelationCode() {
@@ -21,7 +21,7 @@ class EndPoints {
     updateSpeciality(id) {
         return this._urlUpdate = `${this.domine}/api/speciality/${id}/`;
     }
-    updateCUP(id) {
+    updateDxMainCode(id) {
         return this._urlUpdate = `${this.domine}/api/dxmaincode/${id}/`;
     }
 }

@@ -27,6 +27,7 @@ export default class Requests {
     }
     async get(url) {
         this.options.method = "GET";
+        this.options.body = null;
         let response = await this.handleResponse(url)
         return response
 

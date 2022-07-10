@@ -70,7 +70,10 @@ const actions = {
             }
         }
         context.commit('showSnackbar', payload)
-    }
+    },
+    async CLOSE_SNACKBAR(context) {
+        context.commit('closeSnackbar')
+    },
 
 }
 

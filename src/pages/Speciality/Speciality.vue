@@ -28,24 +28,13 @@
   </v-form>
 </template>
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
-import { mapMutations, mapGetters, mapActions } from "vuex";
-import Requests from "@/scripts/Request.js";
-import Constants from "@/scripts/Constants";
-
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "Speciality",
-  mixins: [validationMixin],
-  validations: {
-    description: { required },
-  },
+
   data() {
     return {
       description: "",
-      request: new Requests(),
-      endpoint: new Constants.EndPoints(),
-      messages: new Constants.Messages(),
       valid: true,
       nameRules: [(v) => !!v || "Especialidad es requerida"],
     };
@@ -54,46 +43,29 @@ export default {
     ...mapGetters("settings", ["specialityForm"]),
   },
   methods: {
-    ...mapMutations(["showSnackbar", "showLoading", "specialityForms"]),
-    ...mapActions("settings", ["getSpecialityList"]),
+    ...mapActions("settings", [
+      "getSpecialityList",
+      "addSpeciality",
+      "updateSpeciality",
+    ]),
     async validate() {
       let valid = this.$refs.form.validate();
       if (valid) {
-        this.showLoading({ visible: true });
-        let responseAsJson = undefined;
         if (this.specialityForm.data.id === null) {
-          let url = this.endpoint.getORcreateSpeciality;
           let data = {
             description: this.description,
           };
           let dataJSON = JSON.stringify(data);
-          responseAsJson = await this.request.post(url, dataJSON);
+          this.addSpeciality(dataJSON);
         }
-        if (typeof this.specialityForm.data.id == "number") {
-          let url = this.endpoint.updateSpeciality(this.specialityForm.data.id);
+        if (this.specialityForm.data.id != null) {
           let data = {
             description: this.description,
             id: this.specialityForm.data.id,
           };
-          let dataJSON = JSON.stringify(data);
-          responseAsJson = await this.request.put(url, dataJSON);
-          console.log(responseAsJson);
+          await this.updateSpeciality(data);
         }
-        this.showLoading({ visible: false });
-        if (responseAsJson === undefined) {
-          this.showSnackbar({
-            text: this.messages.errorMessage,
-            icon: "mdi-close-thick",
-            color: "error",
-          });
-          return;
-        }
-        await this.$store.dispatch("settings/getSpecialityList");
-        this.showSnackbar({
-          text: this.messages.successMessage,
-          icon: "mdi-check-bold",
-          color: "success",
-        });
+        await this.getSpecialityList();
       }
     },
     setSpeciality($event) {

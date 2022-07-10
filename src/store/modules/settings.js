@@ -5,7 +5,7 @@ let request = new Request()
 let endpoint = new Constants.EndPoints()
 
 const state = () => ({
-    insuranceList: {},
+    insuranceList: [],
     specialityList: [],
     speciality: { data: {}, visible: false, title: "" },
     dxMainCodeForm: { data: {}, visible: false, title: "" },
@@ -18,6 +18,9 @@ const getters = {
     getSpecialityById: (state) => (id) => {
         return state.specialityList.find(speciality => speciality.id === id)
     },
+    getDxMainCodeBySpecialityId: (state) => (id) => {
+        return state.dxMainCodeList.filter(dxMainCode => dxMainCode.speciality.id === id)
+    },
     specialityForm: (state) => {
         return state.speciality
     },
@@ -25,17 +28,15 @@ const getters = {
         return state.dxMainCodeForm
     },
     getAllSpecialities: (state) => {
-        console.log("3")
         return state.specialityList
     },
     getAllDXMainCode: (state) => {
         return state.dxMainCodeList
     },
-    getAllRelationCode: (state) => {
-        return state.relationCodeList
-    },
-    getStateRequest: (state) => {
-
+    getRelationCodeByDXMainCodeId: (state) => (id) => {
+        let response = state.relationCodeList.filter(relationCodeList => relationCodeList.dxmaincode.id === id)
+        console.log(response)
+        return response
     }
 }
 // mutations
@@ -44,9 +45,7 @@ const mutations = {
         state.insuranceList = data
     },
     specialityList(state, data) {
-        console.log("2")
         state.specialityList = data
-
     },
     dxMainCodeList(state, data) {
         state.dxMainCodeList = data
@@ -86,33 +85,62 @@ const actions = {
         context.commit('insuranceList', responseAsJson)
     },
     async getSpecialityList(context) {
-        console.log("1")
         let url = endpoint.getORcreateSpeciality
         let responseAsJson = await request.get(url)
         context.commit('specialityList', responseAsJson)
-
     },
     async getDXMainCodeList(context) {
-        console.log("1.Dx")
-        let url = endpoint.getORcreateCup
+        let url = endpoint.getORcreateDxMainCode
         let responseAsJson = await request.get(url)
         context.commit('dxMainCodeList', responseAsJson)
-        console.log(responseAsJson)
     },
-    async addDXMainCode({ commit }, data) {
-        let url = endpoint.getORcreateCup
+    async getRelationCodeList(context) {
+        let url = endpoint.getORcreateRelationCode
+        let responseAsJson = await request.get(url)
+        context.commit('relationCodeList', responseAsJson)
+    },
+    async addSpeciality({ dispatch, commit }, data) {
+        dispatch('notifications/SHOW_LOADING', true, { root: true })
+        let url = this.endpoint.getORcreateSpeciality;
+        responseAsJson = await this.request.post(url, data);
+        dispatch('getSpecialityList')
+        dispatch('handleNotification', responseAsJson)
+    },
+    async addDXMainCode({ dispatch, commit }, data) {
+        dispatch('notifications/SHOW_LOADING', true, { root: true })
+        let url = endpoint.getORcreateDxMainCode
         let responseAsJson = await request.post(url, data)
         commit('dxMainCodeList', responseAsJson)
+        dispatch('handleNotification', responseAsJson)
+    },
+    async updateDXMainCode({ dispatch, commit }, data) {
+        dispatch('notifications/SHOW_LOADING', true, { root: true })
+        let url = endpoint.updateDxMainCode(data.id)
+        let responseAsJson = await request.put(url, data)
+        commit('dxMainCodeList', responseAsJson)
+        dispatch('handleNotification', responseAsJson)
+    },
+    async updateSpeciality({ dispatch, commit }, data) {
+        dispatch('notifications/SHOW_LOADING', true, { root: true })
+        let url = endpoint.updateSpeciality(data.id)
+        let dataJSON = JSON.stringify(data);
+        let responseAsJson = await request.put(url, dataJSON)
+        dispatch('handleNotification', responseAsJson)
     },
     async addRelationCode({ dispatch, commit }, data) {
-        let show = true
-        dispatch('notifications/SHOW_LOADING', show, { root: true })
+        dispatch('notifications/SHOW_LOADING', true, { root: true })
         let url = endpoint.getORcreateRelationCode
         let responseAsJson = await request.post(url, data)
         commit('relationCodeList', responseAsJson)
-        show = false
-        dispatch('notifications/SHOW_LOADING', show, { root: true })
+        dispatch('handleNotification', responseAsJson)
+    },
+    handleNotification({ dispatch }, responseAsJson) {
+        dispatch('notifications/SHOW_LOADING', false, { root: true })
         dispatch('notifications/SHOW_SNACKBAR', responseAsJson, { root: true })
+        setTimeout(() => {
+            dispatch('notifications/CLOSE_SNACKBAR', null, { root: true })
+        }, 3000)
+
     }
 }
 

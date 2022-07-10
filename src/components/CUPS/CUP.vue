@@ -16,7 +16,6 @@
                 item-value="id"
                 label="Seleccione Especialidad"
                 return-object
-                @change="setSpecialityId"
               >
                 <template v-slot:append-outer>
                   <v-btn-toggle v-model="toggleSpeciality" rounded>
@@ -51,40 +50,63 @@
             <v-card elevation="18" class="mx-auto" outlined> </v-card>
           </v-stepper-step>
           <v-stepper-content step="2">
-            <v-flex xs12 sm7>
+            <v-flex xs12 sm9>
               <v-select
                 v-model="dxMainCode"
-                :items="getAllDXMainCode"
-                item-text="CUT"
+                :items="dxMainCodes"
+                :item-text="(item) => item.CUP + ' - ' + item.description"
                 item-value="id"
                 label="Seleccione Codigo Principal"
+                required
                 return-object
+                :rules="dxMainCodeRules"
               >
                 <template v-slot:append-outer>
                   <v-btn-toggle v-model="toggleCUP" rounded>
                     <v-btn color="primary" fab x-small dark class="mx-2">
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
-                    <v-btn color="success" fab x-small dark class="mx-2">
+                    <v-btn
+                      color="success"
+                      fab
+                      x-small
+                      dark
+                      class="mx-2"
+                      v-if="dxMainCodeId != 0"
+                    >
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                   </v-btn-toggle>
                 </template>
               </v-select>
-              <v-text-field
+              <v-select
                 v-model="relationCode"
-                label="Codigo Relacionado"
+                :items="relationCodes"
+                item-value="id"
+                :item-text="(item) => item.code + ' - ' + item.description"
+                label="Seleccione Codigo Relacionado"
                 required
+                return-object
                 :rules="relationCodeRules"
               >
-              </v-text-field>
-              <v-text-field
-                v-model="descriptionRelationCode"
-                label="Descripcion Codigo Relacionado"
-                required
-                :rules="descriptionRelationCodeRules"
-              >
-              </v-text-field>
+                <template v-slot:append-outer>
+                  <v-btn-toggle v-model="toggleRelationCode" rounded>
+                    <v-btn color="primary" fab x-small dark class="mx-2">
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="success"
+                      fab
+                      x-small
+                      dark
+                      class="mx-2"
+                      v-if="relationCodeId != 0"
+                    >
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </v-btn-toggle>
+                </template>
+              </v-select>
             </v-flex>
             <v-btn text @click="e6 = 1"> Atras </v-btn>
             <v-btn color="primary" @click="validate"> Guardar </v-btn>
@@ -99,66 +121,44 @@
   </v-form>
 </template>
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
 import { mapMutations, mapState, mapActions, mapGetters } from "vuex";
-import Constants from "@/scripts/Constants";
 import Speciality from "@/pages/Speciality/Speciality";
 import DxMainCode from "@/components/Forms/DxMainCode";
 
 export default {
-  mixins: [validationMixin],
   components: { Speciality, DxMainCode },
 
-  validations: {
-    description: { required },
-    relationCode: { required },
-    cup: { required },
-  },
   data() {
     return {
       valid: true,
       speciality: {},
-      dxMainCode: {},
-      cup: "",
-      dxMainCodes: [],
       specialities: [],
-      description: "",
       specialityId: 0,
-      relationCode: "",
+      dxMainCode: null,
+      dxMainCodes: [],
+      dxMainCodeId: 0,
+      relationCode: null,
+      relationCodes: [],
+      relationCodeId: 0,
+      descriptionCUP: "",
+      dataCUP: {},
+      description: "",
       descriptionRelationCode: "",
       e6: 1,
-      messages: new Constants.Messages(),
       toggleSpeciality: undefined,
       toggleCUP: undefined,
-      relationCodeRules: [
-        (v) => !!v || "Codigo Relacionado es requerido",
-        (v) =>
-          (v && v.length <= 10) || "Cantidad maxima de caracteres excedida",
-      ],
-      descriptionRelationCodeRules: [
-        (v) => !!v || "Descripcion Codigo es requerida",
-      ],
+      toggleRelationCode: undefined,
+      relationCodeRules: [(v) => !!v || "Codigo Relacionado es requerido"],
+      dxMainCodeRules: [(v) => !!v || "Codigo Principal es requerido"],
     };
   },
   computed: {
-    cupErrors() {
-      const errors = [];
-      if (!this.$v.cup.$dirty) return errors;
-      !this.$v.cup.required && errors.push("Codigo Principal es requerido.");
-      return errors;
-    },
-    relationCodeErrors() {
-      const errors = [];
-      if (!this.$v.relationCode.$dirty) return errors;
-      !this.$v.relationCode.required &&
-        errors.push("Codigo Relacionado es requerido.");
-      return errors;
-    },
     ...mapGetters("settings", [
       "getSpecialityById",
       "getAllSpecialities",
       "getAllDXMainCode",
+      "getRelationCodeByDXMainCodeId",
+      "getDxMainCodeBySpecialityId",
     ]),
   },
   async created() {
@@ -172,6 +172,7 @@ export default {
       "getInsuranceList",
       "getSpecialityList",
       "getDXMainCodeList",
+      "getRelationCodeList",
       "addRelationCode",
     ]),
     ...mapState("settings", ["insuranceList"]),
@@ -181,22 +182,8 @@ export default {
       "dxMainCodeForm",
       "toggleCUPForm",
     ]),
-    async getSpecialities() {
-      // let url = this.endpoint.getORcreateSpeciality;
-      // this.specialities = await this.request.get(url);
-      // console.log(this.specialities);
-      //await this.$store.dispatch("settings/getInsuranceList");
-    },
-    setSpecialityId(event) {
-      this.specialityId = event.id;
-      this.speciality = this.getSpecialityById(this.specialityId);
-      let payload = {
-        data: {
-          description: this.speciality.description,
-          id: this.speciality.id,
-        },
-      };
-      this.specialityForms(payload);
+    reset() {
+      this.$refs.form.resetValidation();
     },
     async validate() {
       let valid = this.$refs.form.validate();
@@ -206,34 +193,32 @@ export default {
           code: this.relationCode,
           dxmaincode: this.dxMainCode.id,
         };
-        console.log(payload);
         let dataJSON = JSON.stringify(payload);
-        //this.addRelationCode(dataJSON);
+        this.addRelationCode(dataJSON);
       }
-    },
-    editSpeciality() {
-      this.speciality = this.getSpecialityById(this.specialityId);
-      this.specialityForms(this.speciality);
-      this.toggleSpecialityForm(this.test);
-    },
-    showSpeciality() {
-      let newSpeciality = { description: null, id: null };
-      this.specialityForms(newSpeciality);
-      this.toggleSpecialityForm(this.toggleForm);
     },
   },
   watch: {
     toggleCUP(newState, oldState) {
+      let payload = {};
       if (newState === 0) {
-        let payload = {
-          data: { description: null, id: null },
-          title: "Agregar Codigo Ppal",
+        payload = {
+          data: {
+            CUP: null,
+            description: null,
+            id: null,
+            speciality: this.specialityId,
+          },
+          title: "Agregar Codigo Principal",
         };
-        this.dxMainCodeForm(payload);
       }
       if (newState === 1) {
-        console.log({ newState });
+        payload = {
+          data: this.dataCUP,
+          title: "Editar Codigo Principal",
+        };
       }
+      this.dxMainCodeForm(payload);
       this.toggleCUPForm(newState);
     },
     toggleSpeciality(newState, oldState) {
@@ -245,11 +230,11 @@ export default {
         };
       }
       if (newState === 1) {
-        this.speciality = this.getSpecialityById(this.specialityId);
+        let speciality = this.getSpecialityById(this.specialityId);
         payload = {
           data: {
-            description: this.speciality.description,
-            id: this.speciality.id,
+            description: speciality.description,
+            id: speciality.id,
           },
           title: "Editar Especialidad",
         };
@@ -259,8 +244,38 @@ export default {
     },
     async e6(newState, oldState) {
       if (newState === 2) {
+        let speciality = this.getSpecialityById(this.specialityId);
+        let payload = {
+          data: {
+            description: speciality.description,
+            id: speciality.id,
+          },
+        };
+        this.toggleSpecialityForm(null);
+        this.specialityForms(payload);
         await this.$store.dispatch("settings/getDXMainCodeList");
+        this.getRelationCodeList();
+        this.dxMainCodes = await this.getDxMainCodeBySpecialityId(
+          this.specialityId
+        );
       }
+    },
+    dxMainCode(newState, oldState) {
+      this.dataCUP = {
+        id: newState.id,
+        CUP: newState.CUP,
+        description: newState.description,
+        speciality: newState.speciality.id,
+      };
+      this.dxMainCodeId = newState.id;
+      this.descriptionCUP = newState.description;
+      this.relationCodes = this.getRelationCodeByDXMainCodeId(newState.id);
+    },
+    speciality(newState, oldState) {
+      this.specialityId = newState.id;
+    },
+    relationCode(newState, oldState) {
+      this.relationCodeId = newState.id;
     },
   },
 };
